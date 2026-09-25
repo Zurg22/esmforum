@@ -1,5 +1,8 @@
 const express = require('express')
 const modelo = require('./modelo.js');
+const bd = require('./bd/bd_utils.js');
+const PerguntaRepository = require('./repositories/pergunta_repository.js');
+const BuscaPerguntasService = require('./services/busca_perguntas_service.js');
 
 const app = express()
 app.use(express.json());
@@ -10,6 +13,10 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
+
+// Dependências da funcionalidade de busca
+const perguntaRepository = new PerguntaRepository(bd);
+const buscaPerguntasService = new BuscaPerguntasService(perguntaRepository);
 
 app.get('/', (req, res) => {
   try {
@@ -29,6 +36,18 @@ app.post('/perguntas', (req, res) => {
   catch(erro) {
     res.status(500).json(erro.message); 
   } 
+});
+
+// Busca perguntas por palavra-chave
+app.get('/perguntas/busca', (req, res) => {
+  try {
+    const palavra = req.query.palavra;
+    const perguntas = buscaPerguntasService.executar(palavra);
+    res.json(perguntas);
+  }
+  catch(erro) {
+    res.status(500).json(erro.message);
+  }
 });
 
 app.get('/respostas/:id_pergunta', (req, res) => {
