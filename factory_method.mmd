@@ -1,0 +1,47 @@
+classDiagram
+
+class Notificacao {
+    <<abstract>>
+    +enviar()
+}
+
+class NotificacaoNovaResposta {
+    +enviar()
+}
+
+class NotificacaoMencao {
+    +enviar()
+}
+
+class NotificacaoAtualizacao {
+    +enviar()
+}
+
+class NotificacaoFactory {
+    <<abstract>>
+    +criarNotificacao()*
+}
+
+class NovaRespostaFactory {
+    +criarNotificacao()
+}
+
+class MencaoFactory {
+    +criarNotificacao()
+}
+
+class AtualizacaoFactory {
+    +criarNotificacao()
+}
+
+Notificacao <|-- NotificacaoNovaResposta
+Notificacao <|-- NotificacaoMencao
+Notificacao <|-- NotificacaoAtualizacao
+
+NotificacaoFactory <|-- NovaRespostaFactory
+NotificacaoFactory <|-- MencaoFactory
+NotificacaoFactory <|-- AtualizacaoFactory
+
+NovaRespostaFactory ..> NotificacaoNovaResposta : cria
+MencaoFactory ..> NotificacaoMencao : cria
+AtualizacaoFactory ..> NotificacaoAtualizacao : cria

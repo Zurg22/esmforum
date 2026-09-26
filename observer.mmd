@@ -1,0 +1,28 @@
+classDiagram
+
+class Pergunta {
+    +id_pergunta
+    +texto
+    +adicionarObservador(observador)
+    +removerObservador(observador)
+    +notificarNovaResposta(resposta)
+}
+
+class ObservadorNotificacao {
+    <<interface>>
+    +atualizar(resposta)
+}
+
+class ServicoNotificacao {
+    +atualizar(resposta)
+    +enviarNotificacao()
+}
+
+class AutorPergunta {
+    +id_usuario
+    +nome
+}
+
+Pergunta --> ObservadorNotificacao : notifica
+ServicoNotificacao ..|> ObservadorNotificacao : implementa
+ServicoNotificacao --> AutorPergunta : notifica

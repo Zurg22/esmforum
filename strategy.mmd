@@ -1,0 +1,28 @@
+classDiagram
+
+class BuscaPerguntas {
+    +estrategia
+    +buscar(termo)
+}
+
+class EstrategiaBusca {
+    <<interface>>
+    +buscar(termo)
+}
+
+class BuscaPorPalavra {
+    +buscar(termo)
+}
+
+class BuscaPorRelevancia {
+    +buscar(termo)
+}
+
+class BuscaPorData {
+    +buscar(termo)
+}
+
+BuscaPerguntas --> EstrategiaBusca : usa
+BuscaPorPalavra ..|> EstrategiaBusca : implementa
+BuscaPorRelevancia ..|> EstrategiaBusca : implementa
+BuscaPorData ..|> EstrategiaBusca : implementa
