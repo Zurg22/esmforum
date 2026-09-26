@@ -1,0 +1,47 @@
+classDiagram
+
+class BuscaPerguntasView {
+    +informarPalavra()
+    +exibirResultados()
+}
+
+class CadastroPerguntaView {
+    +informarTexto()
+    +exibirConfirmacao()
+}
+
+class BuscaPerguntasController {
+    +buscar(palavra)
+}
+
+class PerguntaController {
+    +cadastrar(texto)
+}
+
+class BuscaPerguntasService {
+    +executar(palavra)
+}
+
+class PerguntaService {
+    +cadastrarPergunta(texto)
+}
+
+class PerguntaRepository {
+    +buscarPorPalavra(palavra)
+    +cadastrarPergunta(texto)
+}
+
+class BancoDeDados {
+    +queryAll()
+    +exec()
+}
+
+BuscaPerguntasView --> BuscaPerguntasController : envia
+BuscaPerguntasController --> BuscaPerguntasService : usa
+BuscaPerguntasService --> PerguntaRepository : consulta
+PerguntaRepository --> BancoDeDados : acessa
+
+CadastroPerguntaView --> PerguntaController : envia
+PerguntaController --> PerguntaService : usa
+PerguntaService --> PerguntaRepository : persiste
+PerguntaRepository --> BancoDeDados : acessa
