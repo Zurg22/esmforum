@@ -1,38 +1,95 @@
-const mock_bd = {};
+# Padrões de Projeto Existentes
 
-const PerguntaRepository = require('../repositories/pergunta_repository.js');
-const BuscaPerguntasService = require('../services/busca_perguntas_service.js');
+## 1. Introdução
 
-mock_bd.queryAll = jest.fn().mockReturnValue([
-  {
-    id_pergunta: 1,
-    texto: 'Como funciona o desenvolvimento de software?',
-    id_usuario: 1
-  },
-  {
-    id_pergunta: 2,
-    texto: 'O que é engenharia de software?',
-    id_usuario: 1
-  }
-]);
+O projeto ESM Forum possui uma organização que apresenta algumas estruturas relacionadas a padrões de projeto e práticas de desenvolvimento orientado a objetos.
 
-const perguntaRepository = new PerguntaRepository(mock_bd);
-const buscaPerguntasService = new BuscaPerguntasService(perguntaRepository);
+Nesta análise foram considerados principalmente os arquivos existentes no backend, incluindo a implementação realizada na Iteração 1.
 
-test('Deve buscar perguntas por palavra-chave', () => {
-  const perguntas = buscaPerguntasService.executar('software');
+Os principais padrões e práticas identificados foram:
 
-  expect(perguntas.length).toBe(2);
-  expect(perguntas[0].texto).toBe(
-    'Como funciona o desenvolvimento de software?'
-  );
-  expect(perguntas[1].texto).toBe(
-    'O que é engenharia de software?'
-  );
-});
+* Repository;
+* Service Layer;
+* Dependency Injection.
 
-test('Deve retornar lista vazia quando a palavra-chave estiver vazia', () => {
-  const perguntas = buscaPerguntasService.executar('');
+É importante observar que Dependency Injection é uma técnica de projeto e gerenciamento de dependências, e não um padrão GoF.
 
-  expect(perguntas).toEqual([]);
-});
+## 2. Repository
+
+### Onde aparece
+
+O padrão Repository aparece no arquivo:
+
+`repositories/pergunta_repository.js`
+
+A classe `PerguntaRepository` é responsável pelo acesso aos dados relacionados às perguntas.
+
+### Como funciona
+
+O Repository concentra operações de acesso aos dados.
+
+No caso do ESM Forum, o método `buscarPorPalavra()` executa a consulta SQL necessária para localizar perguntas que contenham determinada palavra-chave.
+
+Dessa forma, a camada responsável pela regra de negócio não precisa conhecer diretamente os detalhes da consulta SQL.
+
+### Benefício
+
+A separação facilita a manutenção e permite substituir ou modificar a tecnologia de persistência com menor impacto sobre as regras de negócio.
+
+## 3. Service Layer
+
+### Onde aparece
+
+A estrutura de Service Layer aparece no arquivo:
+
+`services/busca_perguntas_service.js`
+
+A classe `BuscaPerguntasService` concentra a lógica relacionada à busca de perguntas.
+
+### Como funciona
+
+O Service recebe a palavra-chave, realiza a validação básica e solicita ao Repository a busca dos dados.
+
+A camada HTTP não precisa conhecer os detalhes dessa regra.
+
+O fluxo utilizado é:
+
+```text
+Cliente
+   |
+   v
+server.js
+   |
+   v
+BuscaPerguntasService
+   |
+   v
+PerguntaRepository
+   |
+   v
+Banco de dados
+```
+
+### Benefício
+
+A separação entre comunicação HTTP, regras de negócio e acesso aos dados facilita testes, manutenção e evolução da aplicação.
+
+## 4. Dependency Injection
+
+### Onde aparece
+
+A técnica de Dependency Injection aparece principalmente na classe:
+
+`BuscaPerguntasService`
+
+A dependência `PerguntaRepository` é recebida pelo construtor.
+
+A criação das dependências ocorre no `server.js`.
+
+### Como funciona
+
+O Service não cria diretamente uma instância de `PerguntaRepository`.
+
+A dependência é criada externamente e fornecida ao Service.
+
+Isso reduz o acoplamento entre as classes e facilita a substituição da implementação durante testes
